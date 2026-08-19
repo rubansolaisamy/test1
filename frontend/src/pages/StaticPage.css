@@ -1,0 +1,65 @@
+.static-page {
+  padding: 32px;
+}
+
+.static-page h1 {
+  font-size: 36px;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 8px;
+}
+
+.static-page-subtitle {
+  font-size: 16px;
+  color: #6b7280;
+  margin-bottom: 40px;
+}
+
+.static-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+}
+
+.placeholder-card {
+  background: white;
+  border: 2px dashed #e5e7eb;
+  border-radius: 16px;
+  padding: 60px 40px;
+  text-align: center;
+  max-width: 500px;
+}
+
+.placeholder-icon {
+  font-size: 64px;
+  margin-bottom: 24px;
+}
+
+.placeholder-card h2 {
+  font-size: 24px;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 16px;
+}
+
+.placeholder-card p {
+  font-size: 15px;
+  color: #6b7280;
+  line-height: 1.6;
+  margin-bottom: 12px;
+}
+
+.placeholder-card p:last-child {
+  margin-bottom: 0;
+}
+
+@media (max-width: 768px) {
+  .static-page {
+    padding: 20px;
+  }
+
+  .placeholder-card {
+    padding: 40px 20px;
+  }
+}

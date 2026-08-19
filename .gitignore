@@ -1,0 +1,39 @@
+# Environment & secrets
+.env
+*.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.pdb
+.pytest_cache/
+.mypy_cache/
+*.egg-info/
+dist/
+build/
+
+# Virtual environments
+venv/
+.venv/
+env/
+myenv/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Node
+node_modules/
+
+# Editor / AI assistant tooling
+CLAUDE.md
+.claude/
+graphify-out/
+
+# Local dev / test scripts (not for production)
+seed_test.py
+uvicorn.log
+*.log

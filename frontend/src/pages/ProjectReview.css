@@ -1,0 +1,363 @@
+.review-page {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.review-loading, .review-error {
+  padding: 3rem;
+  text-align: center;
+  color: #6b7280;
+}
+
+.review-header { margin-bottom: 2rem; }
+
+.back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  color: #6366f1;
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 500;
+  padding: 0;
+  margin-bottom: 0.75rem;
+}
+.back-btn:hover { color: #4f46e5; }
+
+.review-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.25rem;
+}
+.review-title-row h1 { margin: 0; font-size: 1.75rem; color: #111827; }
+
+.refresh-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0.4rem 0.9rem;
+  background: white;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  color: #374151;
+  cursor: pointer;
+  font-weight: 500;
+}
+.refresh-btn:hover { background: #f9fafb; }
+
+.review-subtitle { color: #6b7280; font-size: 0.875rem; margin: 0; }
+
+/* Stats */
+.review-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2.5rem;
+}
+
+.stat-card {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 1.25rem 1rem;
+  text-align: center;
+}
+.stat-card.green  { border-color: #a7f3d0; background: #ecfdf5; }
+.stat-card.blue   { border-color: #bfdbfe; background: #eff6ff; }
+.stat-card.red    { border-color: #fecaca; background: #fef2f2; }
+.stat-card.purple { border-color: #ddd6fe; background: #f5f3ff; }
+.stat-card.progress-card { border-color: #c7d2fe; background: #eef2ff; }
+
+.stat-num  { font-size: 2rem; font-weight: 700; color: #111827; line-height: 1; }
+.stat-card.green  .stat-num  { color: #065f46; }
+.stat-card.blue   .stat-num  { color: #1e40af; }
+.stat-card.red    .stat-num  { color: #991b1b; }
+.stat-card.purple .stat-num  { color: #4c1d95; }
+.stat-card.progress-card .stat-num { color: #3730a3; }
+
+.stat-label { font-size: 0.75rem; color: #6b7280; margin-top: 4px; font-weight: 500; }
+
+.mini-bar { height: 4px; background: #c7d2fe; border-radius: 2px; margin-top: 8px; }
+.mini-bar-fill { height: 100%; background: #6366f1; border-radius: 2px; transition: width 0.4s; }
+
+/* Section */
+.review-section { margin-bottom: 2.5rem; }
+.section-heading {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #374151;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 0 0 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #f3f4f6;
+}
+
+.empty-state {
+  color: #9ca3af;
+  font-size: 0.875rem;
+  padding: 1.5rem;
+  background: #f9fafb;
+  border-radius: 8px;
+  text-align: center;
+}
+
+/* Planning card */
+.plan-card {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 1.25rem 1.5rem;
+}
+.plan-card.done    { border-color: #a7f3d0; background: #f0fdf4; }
+.plan-card.waiting { border-color: #fde68a; background: #fffbeb; }
+.plan-card.failed  { border-color: #fecaca; background: #fef2f2; }
+
+.plan-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+.plan-card-title {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-weight: 600;
+  color: #111827;
+}
+
+.plan-preview { margin-top: 1rem; }
+.plan-preview summary { font-size: 0.8rem; color: #6b7280; cursor: pointer; user-select: none; }
+.plan-preview pre {
+  margin-top: 0.5rem;
+  background: #1e1e2e;
+  color: #cdd6f4;
+  padding: 1rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+/* Epic cards */
+.epics-list { display: flex; flex-direction: column; gap: 0.75rem; }
+
+.epic-card {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 1.25rem 1.5rem;
+  transition: box-shadow 0.2s;
+}
+.epic-card:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+.epic-card.completed   { border-left: 4px solid #10b981; }
+.epic-card.implementing { border-left: 4px solid #3b82f6; }
+.epic-card.awaiting_approval { border-left: 4px solid #f59e0b; }
+.epic-card.failed      { border-left: 4px solid #ef4444; }
+.epic-card.pending     { border-left: 4px solid #d1d5db; opacity: 0.7; }
+
+.epic-card-main {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.epic-card-left {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.epic-id {
+  font-family: monospace;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #6366f1;
+  background: #eef2ff;
+  padding: 2px 6px;
+  border-radius: 4px;
+  white-space: nowrap;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.epic-info { flex: 1; min-width: 0; }
+.epic-title { font-weight: 600; color: #111827; font-size: 0.95rem; display: block; margin-bottom: 6px; }
+
+.epic-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.meta-chip {
+  font-size: 0.7rem;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: #f3f4f6;
+  color: #6b7280;
+  font-weight: 500;
+}
+.meta-chip.green { background: #d1fae5; color: #065f46; }
+.meta-chip.red   { background: #fee2e2; color: #991b1b; }
+.meta-chip.amber { background: #fef3c7; color: #92400e; }
+
+.epic-card-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}
+
+.link-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 0.35rem 0.85rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  border: 1px solid transparent;
+  transition: all 0.15s;
+}
+
+.pr-btn {
+  background: #4f46e5;
+  color: white;
+}
+.pr-btn:hover { background: #4338ca; }
+
+.outline-btn {
+  background: white;
+  color: #374151;
+  border-color: #d1d5db;
+}
+.outline-btn:hover { background: #f9fafb; }
+
+.error-btn {
+  background: #fee2e2;
+  color: #dc2626;
+  border-color: #fca5a5;
+}
+.error-btn:hover { background: #fecaca; }
+
+.epic-error-detail {
+  margin-top: 1rem;
+  padding: 1rem;
+  background: #1e1e2e;
+  border-radius: 6px;
+}
+.epic-error-detail strong { font-size: 0.75rem; color: #f38ba8; display: block; margin-bottom: 4px; }
+.epic-error-detail pre {
+  color: #cdd6f4;
+  font-size: 0.75rem;
+  white-space: pre-wrap;
+  margin: 0 0 0.75rem;
+}
+
+.epic-summary-text {
+  margin-top: 0.75rem;
+  font-size: 0.85rem;
+  color: #6b7280;
+  line-height: 1.5;
+}
+
+.epic-branch {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 0.5rem;
+  font-size: 0.8rem;
+  color: #9ca3af;
+}
+.epic-branch code {
+  color: #6366f1;
+  background: #eef2ff;
+  padding: 1px 5px;
+  border-radius: 3px;
+}
+
+/* Status badge */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 999px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.pipeline-error-box {
+  background: #1e1e2e;
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+}
+.pipeline-error-box pre {
+  color: #f38ba8;
+  font-size: 0.8rem;
+  white-space: pre-wrap;
+  margin: 0;
+}
+
+/* Stories */
+.stories-section { margin-top: 1rem; }
+.stories-label { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #9ca3af; margin-bottom: 0.5rem; }
+.story-row { display: flex; align-items: flex-start; gap: 0.5rem; padding: 0.4rem 0; font-size: 0.85rem; color: #374151; }
+.story-row.done { color: #065f46; }
+.story-row.live { color: #1e40af; font-weight: 500; }
+.story-row.dim { color: #9ca3af; }
+.story-icon { flex-shrink: 0; margin-top: 2px; }
+.story-tasks { padding-left: 1.5rem; }
+.task-row { display: flex; align-items: center; gap: 0.4rem; font-size: 0.78rem; color: #6b7280; padding: 0.15rem 0; }
+
+/* Pulse */
+.pulse-dot { width: 8px; height: 8px; border-radius: 50%; background: #3b82f6; display: inline-block; flex-shrink: 0; animation: pulse-review 1.4s ease-in-out infinite; }
+@keyframes pulse-review { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.3; transform: scale(1.7); } }
+
+/* Live feed */
+.live-feed { margin-top: 0.75rem; padding: 0.6rem 0.85rem; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 6px; display: flex; align-items: flex-start; gap: 0.5rem; }
+.live-feed-msg { font-size: 0.78rem; color: #1d4ed8; font-style: italic; line-height: 1.4; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+
+/* Implementation summary */
+.impl-summary { margin-top: 0.75rem; padding: 0.75rem 1rem; background: #f0fdf4; border-left: 3px solid #10b981; border-radius: 0 6px 6px 0; }
+.impl-summary-label { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; color: #065f46; margin-bottom: 0.25rem; letter-spacing: 0.05em; }
+.impl-summary-text { font-size: 0.85rem; line-height: 1.5; }
+
+/* Test results */
+.test-panel { margin-top: 0.75rem; }
+.test-bar-wrap { height: 8px; background: #fee2e2; border-radius: 99px; overflow: hidden; margin-bottom: 0.4rem; }
+.test-bar-pass { height: 100%; background: #10b981; border-radius: 99px; transition: width 0.4s; }
+.test-counts { font-size: 0.78rem; color: #6b7280; display: flex; gap: 1rem; }
+.test-counts .pass { color: #065f46; font-weight: 600; }
+.test-counts .fail { color: #991b1b; font-weight: 600; }
+.test-output details { margin-top: 0.5rem; }
+.test-output summary { font-size: 0.75rem; color: #6b7280; cursor: pointer; user-select: none; }
+.test-output pre { margin-top: 0.4rem; background: #1e1e2e; color: #cdd6f4; font-size: 0.72rem; padding: 0.75rem; border-radius: 6px; overflow-x: auto; white-space: pre-wrap; max-height: 250px; overflow-y: auto; }
+
+/* CI chip */
+.ci-chip { display: inline-flex; align-items: center; gap: 4px; font-size: 0.7rem; font-weight: 700; padding: 2px 8px; border-radius: 999px; text-transform: uppercase; }
+.ci-chip.passing { background: #d1fae5; color: #065f46; }
+.ci-chip.checking { background: #fef3c7; color: #92400e; }
+.ci-chip.fixing { background: #ede9fe; color: #5b21b6; }
+.ci-chip.failed { background: #fee2e2; color: #991b1b; }
