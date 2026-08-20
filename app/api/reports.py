@@ -1,18 +1,27 @@
-# app/api/reports.py
+import json
+import time
 import logging
+import redis
 from typing import List, Optional, Dict, Any
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, HTTPException, Query, BackgroundTasks
 from pydantic import BaseModel
+import redis.exceptions
+
 from app.graph.services.reports_service import ReportsService
 
 logger = logging.getLogger(__name__)
 router = APIRouter()
 reports_service = ReportsService()
 
-# ==========================================
-# PYDANTIC SERIALIZATION SCHEMAS
-# ==========================================
+# --- Redis Setup ---
+redis_client = redis.Redis(host='localhost', port=6379, db=0, decode_responses=True)
 
+# Keep data in cache for 24 hours. 
+# We will manually trigger updates if it gets older than 1 minute.
+CACHE_TTL_SECONDS = 86400 
+REFRESH_INTERVAL_SECONDS = 3600
+
+# --- Pydantic Models ---
 class PhaseTask(BaseModel):
     id: str
     title: str
@@ -32,11 +41,16 @@ class CIRoundDistribution(BaseModel):
 
 class ReportSummary(BaseModel):
     total_projects: int
+    active_projects: int
+    completed_projects: int
+    failed_projects: int
+    weekly_project_delta: int
+    total_epics: int
+    total_stories: int
     total_tasks: int
-    completed_tasks: int
-    failed_tasks: int
+    completed_epics: int
+    failed_epics: int
     completion_rate: float
-    weekly_project_delta: str
     phase_stats: List[PhaseStats] = [] 
     ci_rounds_distribution: List[CIRoundDistribution] = [] 
 
@@ -64,18 +78,39 @@ class TaskDetailNode(BaseModel):
     id: str
     title: str
     status: str
+    assigned_to: str
+    execution_mode: str = "AI"
+    started_at: str = ""
+    completed_at: str = ""
+    error_message: str = ""
 
 class StoryDetailNode(BaseModel):
     id: str
     title: str
     status: str
+    assigned_to: str
+    execution_mode: str = "AI"
+    started_at: str = ""
+    completed_at: str = ""
+    error_message: str = ""
+    pr_url: str = ""
+    pr_number: Optional[int] = None
+    pr_additions: int = 0
+    pr_deletions: int = 0
+    pr_changed_files: int = 0
     tasks: List[TaskDetailNode] = []
 
 class EpicDetailRow(BaseModel):
     epic_id: str
     title: str
     status: str
+    assigned_to: str
     failure_reason: str
+    failed_at: str = ""
+    execution_mode: str = "AI"
+    started_at: str = ""
+    completed_at: str = ""
+    error_message: str = ""
     steps: List[TaskStep] = []
     stories: List[StoryDetailNode] = [] 
 
@@ -102,6 +137,8 @@ class ProjectSummaryRow(BaseModel):
     github_branch: str = "main"
     selected_count: int = 0
     implementation_count: int = 0
+    ci_rounds_distribution: List[CIRoundDistribution] = []
+    full_team_list: List[str] = [] 
 
 class TimelineStat(BaseModel):
     month: str
@@ -122,25 +159,80 @@ class FullReportResponse(BaseModel):
     team_workload: List[TeamMemberStats]
     project_breakdown: List[ProjectSummaryRow]
     delivery_trends: List[TimelineStat]
+    current_user_role: str = "developer"
 
-# ==========================================
-# ENDPOINTS
-# ==========================================
 
-@router.get("/reports/all", response_model=FullReportResponse)
-def get_all_reports(username: str = Query(...), project_id: Optional[str] = Query(None)):
+def fetch_and_cache_data(username: str, project_id: Optional[str]):
+    cache_key = f"reports_all:{username}:{project_id or 'all'}"
+    timestamp_key = f"reports_time:{username}:{project_id or 'all'}"
+    
+    logger.info(f"Background Task: Fetching fresh S3 data for {username}...")
     try:
-        projects = reports_service.state_manager.list_projects(username)
-        if project_id:
-            projects = [p for p in projects if getattr(p, 'project_id', None) == project_id]
-            
-        summary_data = reports_service.aggregate_summary_kpis(username, project_id, preloaded_projects=projects)
-        team_data = reports_service.aggregate_team_stats(username, preloaded_projects=projects)
+        # 1. Fetch the slow S3 data
+        full_data = reports_service.generate_full_report(username, project_id)
         
-        return {
-            "summary": summary_data,
-            "team_workload": team_data
-        }
+        # 2. Serialize to JSON
+        if isinstance(full_data, dict):
+            json_data = json.dumps(full_data)
+        else:
+            json_data = full_data.model_dump_json()
+            
+        # 3. Try to update the cache, but don't crash if Redis is down
+        try:
+            redis_client.setex(cache_key, CACHE_TTL_SECONDS, json_data)
+            redis_client.setex(timestamp_key, CACHE_TTL_SECONDS, str(int(time.time())))
+            logger.info(f"Background Task: Successfully updated cache for {username}.")
+        except redis.exceptions.ConnectionError:
+            logger.warning(f"Redis connection failed while saving cache for {username}. Data fetched but not cached.")
+            
+        return full_data
+        
     except Exception as e:
-        logger.error(f"[ReportController] Unified Schema Execution Failure: {str(e)}")
-        raise HTTPException(status_code=500, detail="Failed to compile dashboard tracking models.")
+        logger.error(f"Background Task Failed for {username}: {str(e)}")
+
+
+# --- Endpoint ---
+@router.get("/reports/all", response_model=FullReportResponse)
+def get_all_reports(
+    background_tasks: BackgroundTasks, 
+    username: str = Query(...), 
+    project_id: Optional[str] = Query(None)
+):
+    cache_key = f"reports_all:{username}:{project_id or 'all'}"
+    timestamp_key = f"reports_time:{username}:{project_id or 'all'}"
+
+    try:
+        # Try to read from Redis
+        try:
+            cached_data = redis_client.get(cache_key)
+            last_updated = redis_client.get(timestamp_key)
+        except redis.exceptions.ConnectionError:
+            # REDIS IS DOWN: Fallback to direct S3 call immediately
+            logger.warning("Redis is offline! Bypassing cache and hitting S3 directly.")
+            return reports_service.generate_full_report(username, project_id)
+        
+        
+        ## IMPORTANT: For now, we are bypassing the cache and hitting S3 directly.
+        # return reports_service.generate_full_report(username, project_id) # remove this line if you want to enable caching again
+        # Note: The below caching logic is commented out for now. If you want to enable caching, uncomment the code below and remove the direct S3 call above.
+    
+        if cached_data:
+            logger.info(f"Cache HIT for {username}. Returning instantly.")
+            
+            current_time = int(time.time())
+            last_updated_time = int(last_updated) if last_updated else 0
+            
+            if (current_time - last_updated_time) > REFRESH_INTERVAL_SECONDS:
+                logger.info(f"Cache for {username} is older than 1 hour. Triggering background refresh.")
+                background_tasks.add_task(fetch_and_cache_data, username, project_id)
+                
+            return json.loads(cached_data)
+
+        # Cache MISS
+        logger.info(f"Cache MISS for {username}. Fetching from S3 (Will take ~15s)...")
+        data = fetch_and_cache_data(username, project_id)
+        return data
+
+    except Exception as e:
+        logger.error(f"[ReportController] Execution Failure: {str(e)}")
+        raise HTTPException(status_code=500, detail="Failed to compile dashboard data.")
