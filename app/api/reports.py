@@ -138,13 +138,11 @@ def get_all_reports(username: str = Query(...), project_id: Optional[str] = Quer
         summary_data = reports_service.aggregate_summary_kpis(username, project_id, preloaded_projects=projects)
         team_data = reports_service.aggregate_team_stats(username, preloaded_projects=projects)
         project_data = reports_service.aggregate_project_summaries(username, project_id, preloaded_projects=projects)
-        trends_data = reports_service.aggregate_biweekly_timeline(username, project_id, preloaded_projects=projects)
         
         return {
             "summary": summary_data,
             "team_workload": team_data,
-            "project_breakdown": project_data,
-            "delivery_trends": trends_data
+            "project_breakdown": project_data
         }
     except Exception as e:
         logger.error(f"[ReportController] Unified Schema Execution Failure: {str(e)}")
