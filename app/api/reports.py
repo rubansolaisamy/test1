@@ -102,7 +102,6 @@ class ProjectSummaryRow(BaseModel):
     github_branch: str = "main"
     selected_count: int = 0
     implementation_count: int = 0
-    ci_rounds_distribution: List[CIRoundDistribution] = []
 
 class TimelineStat(BaseModel):
     month: str
