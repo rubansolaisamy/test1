@@ -5,7 +5,6 @@ import redis
 from typing import List, Optional, Dict, Any
 from fastapi import APIRouter, HTTPException, Query, BackgroundTasks
 from pydantic import BaseModel
-import redis.exceptions
 
 from app.graph.services.reports_service import ReportsService
 
@@ -13,13 +12,7 @@ logger = logging.getLogger(__name__)
 router = APIRouter()
 reports_service = ReportsService()
 
-# --- Redis Setup ---
-redis_client = redis.Redis(host='localhost', port=6379, db=0, decode_responses=True)
 
-# Keep data in cache for 24 hours. 
-# We will manually trigger updates if it gets older than 1 minute.
-CACHE_TTL_SECONDS = 86400 
-REFRESH_INTERVAL_SECONDS = 3600
 
 # --- Pydantic Models ---
 class PhaseTask(BaseModel):
